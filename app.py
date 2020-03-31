@@ -103,14 +103,32 @@ app.layout = html.Div(
     children=
     [
         html.H1(myheading),
-        dcc.Graph(
-            id='flyingdog',
-            figure=covid_fig1
+        html.Div(
+            dcc.Graph(
+                id='flyingdog',
+                figure=covid_fig1
+            ),
+            style={
+            'textAlign': 'center',
+            'color': colors['red'],
+            'width': '50%',
+            'float': 'left',
+            'display': 'inline-block'
+            }
         ),
         html.H1(myheading),
-        dcc.Graph(
-            id='flyingdog2',
-            figure=covid_fig2
+        html.Div(
+            dcc.Graph(
+                id='flyingdog',
+                figure=covid_fig2
+            ),
+            style={
+            'textAlign': 'center',
+            'color': colors['red'],
+            'width': '50%',
+            'float': 'left',
+            'display': 'inline-block'
+            }
         ),
         html.A('Code on Github', href=githublink),
         html.Br(),
