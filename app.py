@@ -102,7 +102,11 @@ app.title=tabtitle
 app.layout = html.Div(
     children=
     [
-        html.H1(myheading),
+        html.H1(myheading,
+                style={
+                'textAlign': 'center'
+                }
+            ),
         html.Div(
             dcc.Graph(
                 id='flyingdog',
