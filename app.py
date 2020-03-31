@@ -134,7 +134,6 @@ app.layout = html.Div(
         ),
         html.Div(
             html.A('Join us on LinkedIn', href=linkedin_link),
-            html.Br(),
             html.A('Google Colab Notebook', href=notebook_link),
             style={
                     'textAlign': 'center'
