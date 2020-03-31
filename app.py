@@ -74,12 +74,12 @@ covidLayout1 = go.Layout(
     title = mytitle
 )
 
-color1='orange'
+color3='black'
 newDeaths = go.Bar(
     x=corona_data['Country,Other'],
     y=corona_data.TotalDeaths,
     name='Total Cases',
-    marker={'color':color1}
+    marker={'color':color3}
 )
 
 covidData2 = [newDeaths]
@@ -165,7 +165,7 @@ for i in range(len(limits)):
 
 covid_fig3.update_layout(
         width=1000,
-        title_text = 'US states Confirmed Cases <br>(Click legend to toggle traces)',
+        title_text = 'Confirmed Cases in the US',
         showlegend = True,
         geo = dict(
             scope = 'usa',
@@ -223,7 +223,7 @@ app.layout = html.Div(
             ),
             style={
             'textAlign': 'center',
-            'width': '100%',
+            'width': '50%',
             'float': 'left',
             'display': 'inline-block'
             }
