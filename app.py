@@ -115,7 +115,6 @@ app.layout = html.Div(
             'display': 'inline-block'
             }
         ),
-        html.H1(myheading),
         html.Div(
             dcc.Graph(
                 id='flyingdog1',
