@@ -67,14 +67,30 @@ newCases = go.Bar(
     marker={'color':color2}
 )
 
-covidData = [totalCases, newCases]
-covidLayout = go.Layout(
+covidData1 = [totalCases, newCases]
+
+covidLayout1 = go.Layout(
     barmode='group',
     title = mytitle
 )
 
-covid_fig = go.Figure(data=covidData, layout=covidLayout)
+color1='orange'
+newDeaths = go.Bar(
+    x=corona_data['Country,Other'],
+    y=corona_data.TotalCases,
+    name='Total Cases',
+    marker={'color':color1}
+)
 
+covidData2 = [newDeaths]
+
+covidLayout2 = go.Layout(
+    barmode='group',
+    title = mytitle
+)
+
+covid_fig1 = go.Figure(data=covidData1, layout=covidLayout1)
+covid_fig2 = go.Figure(data=covidData2, layout=covidLayout2)
 
 ########### Initiate the app
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -89,7 +105,12 @@ app.layout = html.Div(
         html.H1(myheading),
         dcc.Graph(
             id='flyingdog',
-            figure=covid_fig
+            figure=covid_fig1
+        ),
+        html.H1(myheading),
+        dcc.Graph(
+            id='flyingdog2',
+            figure=covid_fig2
         ),
         html.A('Code on Github', href=githublink),
         html.Br(),
