@@ -12,14 +12,14 @@ import geopandas as gpd
 import plotly.graph_objects as go
 
 ########### Define your variables
-myheading='Covid19Dashboard'
+myheading='Covid19 Data Visualisation Challenge'
 
 mytitle='Total and New Cases in Top 10 Countries'
 tabtitle='Covid19'
 
 
-githublink='https://github.com/austinlasseter/flying-dog-beers'
-sourceurl='https://www.flyingdog.com/beers/'
+linkedin_link='https://www.linkedin.com/groups/10541367/'
+notebook_link='https://colab.research.google.com/drive/1MiFntcWHOJcfb3G0_vMzX_tEVUpFRdly#scrollTo=Q4LF2ZvEp0Qk'
 
 url = 'https://www.worldometers.info/coronavirus/#countries'
 header = {
@@ -77,7 +77,7 @@ covidLayout1 = go.Layout(
 color1='orange'
 newDeaths = go.Bar(
     x=corona_data['Country,Other'],
-    y=corona_data.TotalCases,
+    y=corona_data.TotalDeaths,
     name='Total Cases',
     marker={'color':color1}
 )
@@ -104,7 +104,8 @@ app.layout = html.Div(
     [
         html.H1(myheading,
                 style={
-                'textAlign': 'center'
+                'textAlign': 'center',
+                'padding': 10
                 }
             ),
         html.Div(
@@ -131,9 +132,16 @@ app.layout = html.Div(
             'display': 'inline-block'
             }
         ),
-        html.A('Code on Github', href=githublink),
+        html.A('Join us on LinkedIn', href=linkedin_link,
+            style={
+                'textAlign': 'center'
+            }),
         html.Br(),
-        html.A('Data Source', href=sourceurl),
+        html.A('Google Colab Notebook', href=notebook_link,
+                style={
+                    'textAlign': 'center'
+                }
+            ),
     ]
 )
 
