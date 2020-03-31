@@ -17,27 +17,56 @@ label2='ABV'
 githublink='https://github.com/austinlasseter/flying-dog-beers'
 sourceurl='https://www.flyingdog.com/beers/'
 
-########### Set up the chart
-bitterness = go.Bar(
-    x=beers,
-    y=ibu_values,
+url = 'https://www.worldometers.info/coronavirus/#countries'
+header = {
+  "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.75 Safari/537.36",
+  "X-Requested-With": "XMLHttpRequest"
+}
+r = requests.get(url, headers=header)
+corona = pd.read_html(r.text)[1]
+corona.fillna(0, inplace=True)
+corona['CountryCode'] = corona['Country,Other'].str[:3].str.upper() 
+# Taking top 10 affected countries due to coronavirus
+corona_data = corona.sort_values(by=['TotalCases'], ascending=False).iloc[1:11, :]
+
+if corona_data.NewCases.dtype != 'int64':
+    # corona_data.NewCases = corona_data.NewCases.map(lambda x: x.lstrip('+'))
+    corona_data.NewCases = corona_data.NewCases.replace(',','', regex=True).astype('int')
+
+if corona_data.TotalCases.dtype != 'int64':
+    corona_data.TotalCases = corona_data.TotalCases.replace(',','', regex=True).astype('int')
+
+if corona_data.TotalDeaths.dtype != 'int64':
+    corona_data.TotalDeaths = corona_data.TotalDeaths.replace(',','', regex=True).astype('int')
+
+if corona_data.NewDeaths.dtype != 'int64':
+    # corona_data.NewDeaths = corona_data.NewDeaths.map(lambda x: x.lstrip('+'))
+    corona_data.NewDeaths = corona_data.NewDeaths.replace(',','', regex=True).astype('int')
+
+if corona_data.TotalRecovered.dtype != 'int64':
+    corona_data.TotalRecovered = corona_data.TotalRecovered.replace(',','', regex=True).astype('int')
+
+########## Set up the chart
+totalCases = go.Bar(
+    x=corona_data['Country,Other'],
+    y=corona_data.TotalCases,
     name=label1,
     marker={'color':color1}
 )
-alcohol = go.Bar(
-    x=beers,
-    y=abv_values,
+newCases = go.Bar(
+    x=corona_data['Country,Other'],
+    y=corona_data.NewCases,
     name=label2,
     marker={'color':color2}
 )
 
-beer_data = [bitterness, alcohol]
-beer_layout = go.Layout(
+covidData = [totalCases, newCases]
+covidLayout = go.Layout(
     barmode='group',
     title = mytitle
 )
 
-beer_fig = go.Figure(data=beer_data, layout=beer_layout)
+covid_fig = go.Figure(data=covidData, layout=covidLayout)
 
 
 ########### Initiate the app
@@ -47,15 +76,17 @@ server = app.server
 app.title=tabtitle
 
 ########### Set up the layout
-app.layout = html.Div(children=[
-    html.H1(myheading),
-    dcc.Graph(
-        id='flyingdog',
-        figure=beer_fig
-    ),
-    html.A('Code on Github', href=githublink),
-    html.Br(),
-    html.A('Data Source', href=sourceurl),
+app.layout = html.Div(
+    children=
+    [
+        html.H1(myheading),
+        dcc.Graph(
+            id='flyingdog',
+            figure=covid_fig
+        ),
+        html.A('Code on Github', href=githublink),
+        html.Br(),
+        html.A('Data Source', href=sourceurl),
     ]
 )
 
