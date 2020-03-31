@@ -89,6 +89,37 @@ covidLayout2 = go.Layout(
     title = mytitle
 )
 
+url = 'https://www.worldometers.info/coronavirus/country/us/'
+header = {
+      "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.75 Safari/537.36",
+      "X-Requested-With": "XMLHttpRequest"
+          }
+r = requests.get(url, headers=header)
+
+corona_data = pd.read_html(r.text)[1]
+corona_data = corona_data.fillna(0)
+
+corona_data = corona_data.sort_values(by=['TotalCases'], ascending=False)
+corona_data = corona_data.iloc[1:, :]
+corona_data
+
+x = ["Diamond Princess Cruise","Wuhan Repatriated","Puerto Rico",
+     "Alaska","Guam", "Northern Mariana Islands","United States Virgin Islands",
+     "Hawaii", "District Of Columbia"]
+
+us_data = corona_data[~corona_data['USAState'].isin(x)]
+us_data = us_data.rename(columns={'USAState': 'State'})
+
+df = pd.read_csv('https://raw.githubusercontent.com/jasperdebie/VisInfo/master/us-state-capitals.csv')
+df = df.drop("description", axis=1)
+x = ['Alaska', 'Hawaii']
+df = df[~df['name'].isin(x)]
+df = df.rename(columns= {"name":"State"})
+
+bubble_data = df.merge(us_data, on="State")
+bubble_data['text'] = bubble_data['State'] + '<br>TotalCases:' + (bubble_data['TotalCases']).astype(str)
+bubble_data = bubble_data.sort_values(by = ["TotalCases"], ascending=False)
+
 total_link = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/who_covid_19_situation_reports/who_covid_19_sit_rep_time_series/who_covid_19_sit_rep_time_series.csv'
 total_file = pd.read_csv(total_link)
 total_case = pd.DataFrame(total_file.iloc[0,:])
