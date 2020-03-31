@@ -2,6 +2,15 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+import pandas as pd
+import seaborn as sns
+import numpy as np
+import requests
+import geopandas as gpd
+import plotly.graph_objects as go
+import squarify 
 
 ########### Define your variables
 beers=['Chesapeake Stout', 'Snake Dog IPA', 'Imperial Porter', 'Double Dog IPA']
