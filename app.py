@@ -137,9 +137,10 @@ app.layout = html.Div(
                 'textAlign': 'center'
             }),
         html.Br(),
-        html.A('Google Colab Notebook', href=notebook_link,
+        html.A('Google Colab Notebook', 
+                href=notebook_link,
                 style={
-                    'textAlign': 'center'
+                    'text-align': 'center'
                 }
             ),
     ]
