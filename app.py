@@ -10,7 +10,6 @@ import numpy as np
 import requests
 import geopandas as gpd
 import plotly.graph_objects as go
-import squarify 
 
 ########### Define your variables
 beers=['Chesapeake Stout', 'Snake Dog IPA', 'Imperial Porter', 'Double Dog IPA']
