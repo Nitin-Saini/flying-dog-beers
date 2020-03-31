@@ -118,7 +118,7 @@ app.layout = html.Div(
         html.H1(myheading),
         html.Div(
             dcc.Graph(
-                id='flyingdog',
+                id='flyingdog1',
                 figure=covid_fig2
             ),
             style={
