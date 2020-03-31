@@ -89,6 +89,59 @@ covidLayout2 = go.Layout(
     title = mytitle
 )
 
+total_link = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/who_covid_19_situation_reports/who_covid_19_sit_rep_time_series/who_covid_19_sit_rep_time_series.csv'
+total_file = pd.read_csv(total_link)
+total_case = pd.DataFrame(total_file.iloc[0,:])
+total_case = total_case.iloc[3:,:]
+total_case = total_case.reset_index()
+total_case = total_case.rename(columns={"index": "Date", 0:"Total_Case"})
+total_case['Date']= pd.to_datetime(total_case['Date'])
+
+ntdoy_URL = "https://finance.yahoo.com/quote/NTDOY/history?period1=1579564800&period2=1585526400&interval=1d&filter=history&frequency=1d"
+ntdoy = pd.read_html(ntdoy_URL)[0]
+ntdoy = ntdoy.drop(["Open","High", "Low", "Adj Close**",  "Volume"], axis=1)
+ntdoy = ntdoy.iloc[:-1,:]
+ntdoy["Date"] = pd.to_datetime(ntdoy['Date'])
+ntdoy['Close*']= ntdoy['Close*'].astype("float")
+ntdoy = ntdoy.rename(columns={"Close*":"Close"})
+ntdoy.sort_values("Date")
+
+limits = [(0,1),(2,10),(11,20),(21,30),(31,48)] # Ranking
+colors = ["maroon","red","orange","grey","lightgrey"]
+names = ["Top 1", "Top 10", "11~20","21~30","30~48"]
+scale = 30
+
+line_plot = total_case.merge(ntdoy, on="Date")
+color = 'tab:red'
+
+covid_fig3 = go.Figure()
+for i in range(len(limits)):
+    lim = limits[i]
+    df_sub = bubble_data[lim[0]:lim[1]]
+    covid_fig3.add_trace(go.Scattergeo(
+        locationmode = 'USA-states',
+        lon = df_sub['longitude'],
+        lat = df_sub['latitude'],
+        text = df_sub['text'],
+        marker = dict(
+            size = df_sub['TotalCases']/scale,
+            color = colors[i],
+            line_color='rgb(40,40,40)',
+            line_width=0.5,
+            sizemode = 'area'),
+        name = names[i]
+        ))
+
+covid_fig3.update_layout(
+        width=1000,
+        title_text = 'US states Confirmed Cases <br>(Click legend to toggle traces)',
+        showlegend = True,
+        geo = dict(
+            scope = 'usa',
+            landcolor = 'rgb(217, 217, 217)'))
+
+
+
 covid_fig1 = go.Figure(data=covidData1, layout=covidLayout1)
 covid_fig2 = go.Figure(data=covidData2, layout=covidLayout2)
 
@@ -128,6 +181,18 @@ app.layout = html.Div(
             style={
             'textAlign': 'center',
             'width': '50%',
+            'float': 'left',
+            'display': 'inline-block'
+            }
+        ),
+        html.Div(
+            dcc.Graph(
+                id='flyingdog3',
+                figure=covid_fig3
+            ),
+            style={
+            'textAlign': 'center',
+            'width': '100%',
             'float': 'left',
             'display': 'inline-block'
             }
