@@ -12,16 +12,12 @@ import geopandas as gpd
 import plotly.graph_objects as go
 
 ########### Define your variables
-beers=['Chesapeake Stout', 'Snake Dog IPA', 'Imperial Porter', 'Double Dog IPA']
-ibu_values=[35, 60, 85, 75]
-abv_values=[5.4, 7.1, 9.2, 4.3]
-color1='lightblue'
-color2='darkgreen'
-mytitle='Beer Comparison'
-tabtitle='beer!'
-myheading='Flying Dog Beers'
-label1='IBU'
-label2='ABV'
+myheading='Covid19Dashboard'
+
+mytitle='Total and New Cases in Top 10 Countries'
+tabtitle='Covid19'
+
+
 githublink='https://github.com/austinlasseter/flying-dog-beers'
 sourceurl='https://www.flyingdog.com/beers/'
 
@@ -55,16 +51,19 @@ if corona_data.TotalRecovered.dtype != 'int64':
     corona_data.TotalRecovered = corona_data.TotalRecovered.replace(',','', regex=True).astype('int')
 
 ########## Set up the chart
+
+color1='orange'
 totalCases = go.Bar(
     x=corona_data['Country,Other'],
     y=corona_data.TotalCases,
-    name=label1,
+    name='Total Cases',
     marker={'color':color1}
 )
+color2='red'
 newCases = go.Bar(
     x=corona_data['Country,Other'],
     y=corona_data.NewCases,
-    name=label2,
+    name='New Cases',
     marker={'color':color2}
 )
 
