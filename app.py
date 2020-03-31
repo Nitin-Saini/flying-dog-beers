@@ -132,17 +132,20 @@ app.layout = html.Div(
             'display': 'inline-block'
             }
         ),
-        html.A('Join us on LinkedIn', href=linkedin_link,
-            style={
-                'textAlign': 'center'
-            }),
-        html.Br(),
-        html.A('Google Colab Notebook', 
+        html.Div(
+            html.A('Join us on LinkedIn', href=linkedin_link,
+                style={
+                    'textAlign': 'center'
+                }
+            ),
+            html.Br(),
+            html.A('Google Colab Notebook', 
                 href=notebook_link,
                 style={
                     'text-align': 'center'
                 }
-            ),
+            )
+        ),
     ]
 )
 
