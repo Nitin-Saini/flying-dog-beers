@@ -110,7 +110,6 @@ app.layout = html.Div(
             ),
             style={
             'textAlign': 'center',
-            'color': colors['red'],
             'width': '50%',
             'float': 'left',
             'display': 'inline-block'
@@ -124,7 +123,6 @@ app.layout = html.Div(
             ),
             style={
             'textAlign': 'center',
-            'color': colors['red'],
             'width': '50%',
             'float': 'left',
             'display': 'inline-block'
