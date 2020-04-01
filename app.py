@@ -73,7 +73,7 @@ chartLayout1 = go.Layout(
 color3='black'
 newDeaths = go.Bar(
     x=corona_data['Country,Other'],
-    y=corona_data.TotalDeaths.sort_values(by=['TotalDeaths'], ascending=False),
+    y=corona_data.TotalDeaths,
     name='Total Cases',
     marker={'color':color3}
 )
