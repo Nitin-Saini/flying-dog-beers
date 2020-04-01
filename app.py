@@ -14,13 +14,12 @@ import plotly.graph_objects as go
 ########### Define your variables
 myheading='Covid19 Data Visualisation Challenge'
 
-mytitle='Total and New Cases in Top 10 Countries'
-tabtitle='Covid19'
-
-
+mytitle1='Total and New Cases in Top 10 Countries'
+# tabtitle='Covid19'
 linkedin_link='https://www.linkedin.com/groups/10541367/'
 notebook_link='https://colab.research.google.com/drive/1MiFntcWHOJcfb3G0_vMzX_tEVUpFRdly#scrollTo=Q4LF2ZvEp0Qk'
 
+#data for first 2 charts
 url = 'https://www.worldometers.info/coronavirus/#countries'
 header = {
   "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.75 Safari/537.36",
@@ -30,6 +29,7 @@ r = requests.get(url, headers=header)
 corona = pd.read_html(r.text)[1]
 corona.fillna(0, inplace=True)
 corona['CountryCode'] = corona['Country,Other'].str[:3].str.upper() 
+
 # Taking top 10 affected countries due to coronavirus
 corona_data = corona.sort_values(by=['TotalCases'], ascending=False).iloc[1:11, :]
 
@@ -50,8 +50,7 @@ if corona_data.NewDeaths.dtype != 'int64':
 if corona_data.TotalRecovered.dtype != 'int64':
     corona_data.TotalRecovered = corona_data.TotalRecovered.replace(',','', regex=True).astype('int')
 
-########## Set up the chart
-
+# Set up the chart first 2 charts
 color1='orange'
 totalCases = go.Bar(
     x=corona_data['Country,Other'],
@@ -67,9 +66,8 @@ newCases = go.Bar(
     marker={'color':color2}
 )
 
-covidData1 = [totalCases, newCases]
-
-covidLayout1 = go.Layout(
+chartData1 = [totalCases, newCases]
+chartLayout1 = go.Layout(
     barmode='group',
     title = mytitle
 )
@@ -82,31 +80,23 @@ newDeaths = go.Bar(
     marker={'color':color3}
 )
 
-covidData2 = [newDeaths]
-
-covidLayout2 = go.Layout(
+chartData2 = [newDeaths]
+chartLayout2 = go.Layout(
     barmode='group',
     title = mytitle
 )
 
-url = 'https://www.worldometers.info/coronavirus/country/us/'
-header = {
-      "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.75 Safari/537.36",
-      "X-Requested-With": "XMLHttpRequest"
-          }
-r = requests.get(url, headers=header)
+covid_fig1 = go.Figure(data=chartData1, layout=chartLayout1)
+covid_fig2 = go.Figure(data=chartData2, layout=chartLayout2)
 
+
+# setting up 3rd chart by Luca Chuang
 corona_data = pd.read_html(r.text)[1]
 corona_data = corona_data.fillna(0)
-
-corona_data = corona_data.sort_values(by=['TotalCases'], ascending=False)
-corona_data = corona_data.iloc[1:, :]
-corona_data
-
+corona_data = corona_data.sort_values(by=['TotalCases'], ascending=False).iloc[1:, :]
 x = ["Diamond Princess Cruise","Wuhan Repatriated","Puerto Rico",
      "Alaska","Guam", "Northern Mariana Islands","United States Virgin Islands",
      "Hawaii", "District Of Columbia"]
-
 us_data = corona_data[~corona_data['USAState'].isin(x)]
 us_data = us_data.rename(columns={'USAState': 'State'})
 
@@ -128,22 +118,10 @@ total_case = total_case.reset_index()
 total_case = total_case.rename(columns={"index": "Date", 0:"Total_Case"})
 total_case['Date']= pd.to_datetime(total_case['Date'])
 
-ntdoy_URL = "https://finance.yahoo.com/quote/NTDOY/history?period1=1579564800&period2=1585526400&interval=1d&filter=history&frequency=1d"
-ntdoy = pd.read_html(ntdoy_URL)[0]
-ntdoy = ntdoy.drop(["Open","High", "Low", "Adj Close**",  "Volume"], axis=1)
-ntdoy = ntdoy.iloc[:-1,:]
-ntdoy["Date"] = pd.to_datetime(ntdoy['Date'])
-ntdoy['Close*']= ntdoy['Close*'].astype("float")
-ntdoy = ntdoy.rename(columns={"Close*":"Close"})
-ntdoy.sort_values("Date")
-
 limits = [(0,1),(2,10),(11,20),(21,30),(31,48)] # Ranking
 colors = ["maroon","red","orange","grey","lightgrey"]
 names = ["Top 1", "Top 10", "11~20","21~30","30~48"]
 scale = 30
-
-line_plot = total_case.merge(ntdoy, on="Date")
-color = 'tab:red'
 
 covid_fig3 = go.Figure()
 for i in range(len(limits)):
@@ -171,18 +149,13 @@ covid_fig3.update_layout(
             scope = 'usa',
             landcolor = 'rgb(217, 217, 217)'))
 
-
-
-covid_fig1 = go.Figure(data=covidData1, layout=covidLayout1)
-covid_fig2 = go.Figure(data=covidData2, layout=covidLayout2)
-
-########### Initiate the app
+# Initiating the app
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 app.title=tabtitle
 
-########### Set up the layout
+# Setting up the layout
 app.layout = html.Div(
     children=
     [
@@ -194,7 +167,7 @@ app.layout = html.Div(
             ),
         html.Div(
             dcc.Graph(
-                id='flyingdog',
+                id='chart1',
                 figure=covid_fig1
             ),
             style={
@@ -206,7 +179,7 @@ app.layout = html.Div(
         ),
         html.Div(
             dcc.Graph(
-                id='flyingdog1',
+                id='chart2',
                 figure=covid_fig2
             ),
             style={
@@ -218,7 +191,7 @@ app.layout = html.Div(
         ),
         html.Div(
             dcc.Graph(
-                id='flyingdog3',
+                id='chart3',
                 figure=covid_fig3
             ),
             style={
@@ -229,17 +202,16 @@ app.layout = html.Div(
             }
         ),
         html.Div(
+            children=[
             html.A('Join us on LinkedIn', href=linkedin_link),
             style={
-                    'textAlign': 'center'
-                }
-        ),
-        html.Div(
+                'textAlign': 'center'
+            },
             html.A('Google Colab Notebook', href=notebook_link),
             style={
-                    'textAlign': 'center'
-                }
-        ),
+                'textAlign': 'center'
+            }
+        ]),
     ]
 )
 
