@@ -89,6 +89,8 @@ covid_fig2 = go.Figure(data=chartData2, layout=chartLayout2)
 
 
 # setting up 3rd chart by Luca Chuang
+url = 'https://www.worldometers.info/coronavirus/country/us/'
+r = requests.get(url, headers=header)
 corona_data = pd.read_html(r.text)[1]
 corona_data = corona_data.fillna(0)
 corona_data = corona_data.sort_values(by=['TotalCases'], ascending=False).iloc[1:, :]
