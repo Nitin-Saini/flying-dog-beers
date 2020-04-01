@@ -202,16 +202,17 @@ app.layout = html.Div(
             }
         ),
         html.Div(
-            children=[
             html.A('Join us on LinkedIn', href=linkedin_link),
             style={
-                'textAlign': 'center'
-            },
+                    'textAlign': 'center'
+                }
+        ),
+        html.Div(
             html.A('Google Colab Notebook', href=notebook_link),
             style={
-                'textAlign': 'center'
-            }
-        ]),
+                    'textAlign': 'center'
+                }
+        ),
     ]
 )
 
