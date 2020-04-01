@@ -13,8 +13,6 @@ import plotly.graph_objects as go
 
 ########### Define your variables
 myheading='Covid19 Data Visualisation Challenge'
-
-mytitle1='Total and New Cases in Top 10 Countries'
 # tabtitle='Covid19'
 linkedin_link='https://www.linkedin.com/groups/10541367/'
 notebook_link='https://colab.research.google.com/drive/1MiFntcWHOJcfb3G0_vMzX_tEVUpFRdly#scrollTo=Q4LF2ZvEp0Qk'
@@ -69,13 +67,13 @@ newCases = go.Bar(
 chartData1 = [totalCases, newCases]
 chartLayout1 = go.Layout(
     barmode='group',
-    title = mytitle
+    title = 'Total and New Cases in Top 10 Countries'
 )
 
 color3='black'
 newDeaths = go.Bar(
     x=corona_data['Country,Other'],
-    y=corona_data.TotalDeaths,
+    y=corona_data.TotalDeaths.sort_values(by=['TotalDeaths'], ascending=False),
     name='Total Cases',
     marker={'color':color3}
 )
@@ -83,7 +81,7 @@ newDeaths = go.Bar(
 chartData2 = [newDeaths]
 chartLayout2 = go.Layout(
     barmode='group',
-    title = mytitle
+    title = 'Total Deaths in Top 10 Countries'
 )
 
 covid_fig1 = go.Figure(data=chartData1, layout=chartLayout1)
