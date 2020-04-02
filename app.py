@@ -240,11 +240,20 @@ app.layout = html.Div(
     children=
     [
         html.H1(myheading,
-                style={
-                'textAlign': 'center',
-                'padding': 10
-                }
-            ),
+            style={
+            'textAlign': 'center',
+            'padding': 10
+            }
+        ),
+        html.Div(
+            html.A('Nitin Saini', href='https://www.linkedin.com/in/saininitinkr/'),
+            style={
+                'textAlign': 'left'
+                'width': '50%',
+                'float': 'left',
+                'display': 'inline-block'
+            }
+        ),
         html.Div(
             dcc.Graph(
                 id='chart1',
@@ -255,6 +264,15 @@ app.layout = html.Div(
             'width': '50%',
             'float': 'left',
             'display': 'inline-block'
+            }
+        ),
+        html.Div(
+            html.A('Nitin Saini', href='https://www.linkedin.com/in/saininitinkr/'),
+            style={
+                'textAlign': 'left'
+                'width': '50%',
+                'float': 'left',
+                'display': 'inline-block'
             }
         ),
         html.Div(
@@ -270,6 +288,15 @@ app.layout = html.Div(
             }
         ),
         html.Div(
+            html.A('Luca Chuang', href='https://www.linkedin.com/in/shen-wei-luca-chuang-33978b57'),
+            style={
+                'textAlign': 'left'
+                'width': '50%',
+                'float': 'left',
+                'display': 'inline-block'
+            }
+        ),
+        html.Div(
             dcc.Graph(
                 id='chart3',
                 figure=covid_fig3
@@ -279,6 +306,15 @@ app.layout = html.Div(
             'width': '50%',
             'float': 'left',
             'display': 'inline-block'
+            }
+        ),
+        html.Div(
+            html.A('Smridhi Mangla', href='https://www.linkedin.com/in/smridhi-mangla-4404/'),
+            style={
+                'textAlign': 'left'
+                'width': '50%',
+                'float': 'left',
+                'display': 'inline-block'
             }
         ),
         html.Div(
