@@ -1,6 +1,7 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_table
 import plotly.graph_objs as go
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -10,10 +11,12 @@ import numpy as np
 import requests
 import geopandas as gpd
 import plotly.graph_objects as go
+import plotly.figure_factory as ff
+from plotly.subplots import make_subplots
 
 ########### Define your variables
 myheading='Covid19 Data Visualisation Challenge'
-# tabtitle='Covid19'
+apptitle='Covid19-Dashboard'
 linkedin_link='https://www.linkedin.com/groups/10541367/'
 notebook_link='https://colab.research.google.com/drive/1MiFntcWHOJcfb3G0_vMzX_tEVUpFRdly#scrollTo=Q4LF2ZvEp0Qk'
 
@@ -149,11 +152,88 @@ covid_fig3.update_layout(
             scope = 'usa',
             landcolor = 'rgb(217, 217, 217)'))
 
+# Setting up chart 4 by Smridhi Mangla
+#download confirmed cases data from JHU dashboard
+url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
+df_confirmed = pd.read_csv(url)
+
+#top ten impacted countries 
+df_tmp_subset = df_confirmed.drop(['Province/State','Lat','Long'],axis=1)
+df_tmp_subset = pd.DataFrame(df_tmp_subset.groupby(['Country/Region'],as_index=False).sum())
+df_tmp_subset = df_tmp_subset.sort_values(by=df_confirmed.columns[len(df_confirmed.columns)-1], ascending=False)
+df_topten_countries = df_tmp_subset[0:10]
+
+x_axis = df_topten_countries.columns
+covid_fig4 = go.Figure()
+annotations = []
+
+for i in range(0,10,1):
+  y = df_topten_countries.iloc[i,1:].values.flatten().tolist()
+  covid_fig4.add_trace(go.Scatter(x=x_axis[1:], y=y,
+                    mode='lines+markers',
+                    name=df_topten_countries.iloc[i,0]))
+
+# Title
+annotations.append(dict(xref='paper', yref='paper', x=0.0, y=1.05,
+                              xanchor='left', yanchor='bottom',
+                              text='',
+                              font=dict(family='Arial',
+                                        size=18,
+                                        color='rgb(37,37,37)'),
+                              showarrow=False))
+covid_fig4.update_layout(annotations=annotations,
+    title_text='Confirmed Case Trend of Top Ten Impacted Countries')
+
+#Adding heatmap 
+covid19data = pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv')
+covid19states = pd.DataFrame(covid19data['Country/Region'])
+covid19data.drop(covid19data.iloc[:, :-22], axis=1, inplace=True)
+covid19data = covid19data.diff(axis=1)
+covid19data['total_cases'] = covid19data.sum(axis=1)
+covid19data.drop(covid19data.iloc[:, :-22], axis=1, inplace=True)
+covid19data = covid19states.merge(covid19data, left_index = True, right_index = True)
+covid19data = covid19data.sort_values(by='total_cases', ascending=False)
+covid19data.columns = ["Country","D21-7", "D21-6", "D21-5", "D21-4", "D21-3", "D21-2", "D21-1",
+                   "D14-7", "D14-6", "D14-5", "D14-4", "D14-3", "D14-2", "D14-1",
+                   "D7-7", "D7-6", "D7-5", "D7-4", "D7-3", "D7-2", "D7-1",
+                   "total_deaths"]
+covid19data['total_deaths'] = covid19data['total_deaths'].astype('object')
+
+for column in covid19data.columns:
+  if covid19data[column].dtype == 'float':
+    covid19data[column] = covid19data[column].astype('int')
+
+colsLast7 = [('Last7Days', col) for col in covid19data.columns if 'D7-' in col]
+colsLast14 = [('Last14Days', col) for col in covid19data.columns if 'D14-' in col]
+colsLast21 = [('Last21Days', col) for col in covid19data.columns if 'D21-' in col]
+totalStats = [('TotalStats', col) for col in covid19data.columns if 'total' in col]
+totalState = [('Countries', col) for col in covid19data.columns if 'Country' in col]
+th_props = [
+  ('font-size', '12px'),
+  ('text-align', 'left'),
+  ('font-weight', 'bold'),
+  ('color', '#6d6d6d'),
+  ('background-color', '#f7f7f9')
+  ]
+
+# Set CSS properties for td elements in dataframe
+td_props = [
+  ('font-size', '11px')
+  ]
+styles = [
+  dict(selector="th", props=th_props),
+  dict(selector="td", props=td_props)
+  ]
+
+#covid19data.columns = pd.MultiIndex.from_tuples(totalState + colsLast21 + colsLast14 + colsLast7 + totalStats)
+#covid19data = covid19data.style.background_gradient(cmap='Reds', axis=1).set_table_styles([{'selector': 'th', 'props': [('font-size', '10pt')]}]).set_table_styles(styles)
+#covid_fig5 = ff.create_annotated_heatmap(covid19data.to_dict("rows"))
+
 # Initiating the app
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
-app.title=tabtitle
+app.title=apptitle
 
 # Setting up the layout
 app.layout = html.Div(
@@ -201,6 +281,30 @@ app.layout = html.Div(
             'display': 'inline-block'
             }
         ),
+        html.Div(
+            dcc.Graph(
+                id='chart4',
+                figure=covid_fig4
+            ),
+            style={
+            'textAlign': 'center',
+            'width': '50%',
+            'float': 'left',
+            'display': 'inline-block'
+            }
+        ),
+        # html.Div(
+        #     dcc.Graph(
+        #         id='chart5',
+        #         figure=covid_fig5
+        #     ),
+        #     style={
+        #     'textAlign': 'center',
+        #     'width': '50%',
+        #     'float': 'left',
+        #     'display': 'inline-block'
+        #     }
+        # ),
         html.Div(
             html.A('Join us on LinkedIn', href=linkedin_link),
             style={
